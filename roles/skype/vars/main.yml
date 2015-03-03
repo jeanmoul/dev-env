@@ -1,0 +1,4 @@
+---
+
+skype_ppa: "deb [arch=amd64] https://repo.skype.com/deb stable main"
+skype_ppa_key: https://repo.skype.com/data/SKYPE-GPG-KEY
