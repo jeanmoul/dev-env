@@ -1,0 +1,8 @@
+{
+  "storage-driver": "overlay2",
+  "log-level": "info",
+  "iptables": true,
+  "insecure-registries": [],
+  "cgroup-parent": "docker",
+  "icc": false
+}

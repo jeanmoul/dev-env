@@ -1,0 +1,14 @@
+---
+timezone: "Europe/Luxembourg"
+fallback_ntp_servers:
+  - timeserv.cssf.lu
+
+
+
+proxy_url: http://proxy.cssf.lu:8080
+
+proxy_env:
+  http_proxy: "{{ proxy_url }}"
+  https_proxy: "{{ proxy_url }}"
+  HTTPS_PROXY: "{{ proxy_url }}"
+  HTTP_PROXY: "{{ proxy_url }}"

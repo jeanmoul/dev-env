@@ -1,20 +1,114 @@
 ---
+
+- name: Remove old version if any
+  apt:
+    name: "{{ packages }}"
+    state: absent
+  vars:
+    packages:  
+    - docker
+    - docker-engine
+    - docker.io
+    - docker-compose
+    - containerd
+    - runc
+  become: true
+  
+- name: install dependencies
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:  
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg2
+    - software-properties-common
+    - python3
+    - python3-pip
+    - python3-setuptools
+    - ufw
+    - python3-jmespath
+    - unattended-upgrades
+    - jq
+  become: true
+
+
 # Install & Configure Docker
+
+- name: Add public key
+  apt_key: 
+    url: "{{ docker_ppa_key }}" 
+    id: "{{ docker_ppa_id }}" 
+    state: present
+  sudo: true
 
 - name: Add docker repository
   apt_repository: repo="{{ docker_ppa }}" state=present
   sudo: true
 
-- name: Add public key
-  apt_key: url="{{ docker_ppa_key }}" id="{{ docker_ppa_id }}" state=present
-  sudo: true
 
-- name: Update package manager
-  apt: update_cache=yes
+- name: Install  docker package
+  apt: 
+    name: "{{ packages }}" 
+    state: present
+    update-cache: yes
+  vars:
+    packages: 
+    - "docker-ce={{ docker_version|regex_replace('x', '') }}*"
   sudo: true
+  
+  
+- name: Check if docker proxy config file already exists
+  stat:
+    path: "{{ docker_proxy_conf }}"
+  register: dockerhttpconfexists
+  
 
-- name: Install latest docker package
-  apt: pkg="{{ item }}" state=latest
-  with_items:
-    - docker-ce
-  sudo: true
+- name: Create docker proxy config directory
+  file:
+    path:  "{{ docker_proxy_conf | dirname }}"   
+    state: directory
+    mode: 0755
+  when: dockerhttpconfexists.stat.exists == False
+
+- name: Create empty docker proxy config file if not existing
+  file:
+    path: "{{ docker_proxy_conf }}"
+    state: touch
+  when: dockerhttpconfexists.stat.exists == False
+  
+- name: Check if docker http proxy config was already written by ansible
+  lineinfile:
+    path:  "{{ docker_proxy_conf }}"
+    line:  "# BEGIN ANSIBLE MANAGED BLOCK"
+    state: present
+  check_mode: yes
+  register: proxyConfigManaged
+
+- name: Prepare docker proxy string setting 
+  set_fact:
+    dockerProxyString: "{{ dockerProxyString }}{{ ( my_idx > 0)|ternary(' ','') }}{{ item.key }}={{ item.value }}"
+  loop:  "{{ proxy_env | dict2items  }}"
+  loop_control:
+    index_var: my_idx
+    
+- name: Configure the Docker storage driver
+  copy:
+    src: "docker/daemon.json"
+    dest: /etc/docker/daemon.json
+  notify: docker conf changed
+
+- name: Insert/Update http proxy configuration in /etc/systemd/system/docker.service.d/http-proxy.conf
+  blockinfile:
+    path: "{{ docker_proxy_conf }}"
+    create: yes
+    block: |
+      [Service]
+      Environment="{{ dockerProxyString }}"
+  when: proxyConfigManaged
+  register: proxyConfigChanged
+  notify: docker conf changed
+
+

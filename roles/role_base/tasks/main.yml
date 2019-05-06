@@ -1,0 +1,41 @@
+---
+######
+# packages facts
+######
+- name: Gather package facts
+  package_facts:
+    manager: auto
+
+##########################################
+#   NTP client conf
+##########################################
+- name: set timezone
+  timezone:
+    name: "{{ timezone }}"
+
+
+- name: Configure systemd-timesyncd
+  template:
+    src: timesyncd.conf.j2
+    dest: /etc/systemd/timesyncd.conf
+    mode: 0644
+    owner: root
+    group: root
+    force: no
+  notify: systemd-timesyncd configuration changed
+
+- name: Start and enable systemd-timesyncd
+  service:
+    name: systemd-timesyncd.service
+    enabled: yes
+    state: started
+
+#############################################
+# Proxy conf
+#############################################
+- name: env var for proxy in /etc/environment
+  lineinfile:
+    dest: /etc/environment
+    line: "{{ item.key }}={{ item.value }}"
+  loop:  "{{ proxy_env | dict2items  }}" 
+    

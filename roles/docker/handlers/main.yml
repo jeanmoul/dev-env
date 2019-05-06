@@ -1,0 +1,12 @@
+---
+- name: Restart  daemon-reload
+  systemd:
+    daemon_reload: yes
+  listen: docker conf changed
+  
+- name: Restart  docker
+  service:
+    name: docker
+    state: restarted
+  listen: docker conf changed
+  

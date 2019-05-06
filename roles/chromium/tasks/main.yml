@@ -2,11 +2,15 @@
 # Install & Configure Chromium
 
 - name: Install latest chromium package with codecs
-  apt: pkg="{{ item }}" state=present force=yes
-  with_items:
-    - chromium-browser
-    - chromium-browser-l10n
-    - chromium-codecs-ffmpeg-extra
+  apt: 
+    name: "{{ packages }}" 
+    state: present 
+    force: yes
+  vars:
+    packages:
+      - chromium-browser
+      - chromium-browser-l10n
+      - chromium-codecs-ffmpeg-extra
   become: true
 
 - name: Check if ~/.profile exists
