@@ -1,0 +1,3 @@
+[submodule "roles/role_security_user"]
+	path = roles/role_security_user
+	url = https://github.com/ryandaniels/ansible-role-create-users.git

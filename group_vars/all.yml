@@ -17,16 +17,23 @@ apt_packages:
   - inkscape
   - sketch
   - pandoc
-#  - { name: docker, version: '1.5*' }
-#  - docker-compose
+  - aptitude
   - git
   - htop
   - iotop
+  - iftop
   - net-tools
   - coreutils
   - dos2unix
   - libnss3-tools
   - maven
+  - gradle
+  - zsh
+  - whois
+  - colordiff
+  - screen
+  - tmux
+  - terminator
 #for docker
   - apt-transport-https
   - ca-certificates
@@ -34,7 +41,9 @@ apt_packages:
   - ufw
   - unattended-upgrades
   - jq
-  
+#for the example of pinning version
+#  - { name: passwd, version: '1:4.5-1ubuntu1' }
+
 
 nodejs_version: 12.x
 docker_version: 5:18.x
@@ -54,8 +63,29 @@ npm_packages:
   - react-i18next
   - react-bootstrap
   - react-axios
-  
 
+pip3_packages:
+  - pipenv
+  - numpy
+  - scipy
+  - pandas
+  - cython
+  - h5py
+  - scikit-learn
+  - requests
+  - matplotlib
+  - nose
+  - jupyter
+  - jupyterlab
+  - beautifulsoup4
+  - jinja2
+  - fabric
+
+umake_ide_packages:
+  - eclipse
+  - idea-ultimate
+  - atom
+  
 ##############################################
 proxy_url: "http://proxy.cssf.lu:8080"
 proxy_env:
@@ -75,3 +105,20 @@ ntp_servers:
   
 #############################################
 ansible_managed: "This file is managed by ansible !!!!!!!!!!!!!!!!!!!" 
+
+
+##############################################
+# Default users
+#############################################
+users:
+  - name: "Security User"
+    username: security
+    comment: Security User
+    groups: ['sudo', 'security']
+    uid: 1042
+    home: /tmp/security
+    password: $6$JQEJb0p2$byvrH4k1al9EcEnc1W3AAH3zzFuQjk//B7v5W5xBPLT0b2WKIIt05Cg44D5LX5iDqsxRUx7j5.eG5RSos/b6l1
+    use_sudo: yes
+    use_sudo_nopass: yes
+    user_state: present
+
