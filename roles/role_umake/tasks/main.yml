@@ -1,0 +1,45 @@
+---
+
+
+#- name: Add public key
+#  apt_key: url="{{ vscode_ppa_key }}" id="{{ vscode_ppa_id }}" state=present
+#  become: true
+
+- name: Add ubuntu-make repository
+  apt_repository: repo="{{ ubuntu_make_ppa }}" state=present
+  become: true
+
+- name: Install  ubuntu-make package
+  apt: 
+    name: "{{ packages }}" 
+    state: latest
+  vars:
+    packages: 
+    - ubuntu-make
+  become: true  
+  
+- name: Prepare folders for tools
+  file:  
+    path: /opt/{{ item }}
+    state: directory
+  with_items: "{{ umake_ide_packages | default([]) }}"
+  
+- name: check if already installed
+  stat:
+    path: /opt/{{ item }}/bin/
+  with_items: "{{ umake_ide_packages | default([]) }}"
+  register: check_dir_exist
+
+#- debug:
+#    msg: "umake ide {{ item.1 }} /opt/{{ item.0 }}"
+#  loop: "{{ umake_ide_packages | default([]) |flatten(levels=1)|zip(check_dir_exist.results)|list }}"
+
+- name: Install ide tools
+  shell: umake ide {{ item.0 }} /opt/{{ item.0 }}
+  when: item.1.stat.exists == false
+  ignore_errors: yes 
+  loop: "{{ umake_ide_packages | default([]) |flatten(levels=1)|zip(check_dir_exist.results)|list }}"
+  ## with_together
+
+
+
