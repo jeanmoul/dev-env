@@ -1,0 +1,17 @@
+- name: Install Common Development Tools
+  hosts: 127.0.0.1
+  connection: local
+  roles:
+    - { role: role_base, tags: [ base, cert ] }
+    - { role: apt, tags: apt }
+    - { role: python, tags: python }
+    - chromium
+    - { role: docker, tags: docker}
+    - { role: vscode, tags: vscode}
+    - { role: ca-cert, tags: cert }
+    - { role: role_security_user, tags: create_user}
+ #External Roles need proxy to be set   
+    - { role: chaosmail.nodejs, tags: nodejs, failed_when: false  }
+  become_user: root
+  become: true
+  environment: "{{ proxy_env }}"
