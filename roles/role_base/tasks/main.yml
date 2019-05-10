@@ -38,4 +38,8 @@
     dest: /etc/environment
     line: "{{ item.key }}={{ item.value }}"
   loop:  "{{ proxy_env | dict2items  }}" 
+  
+
+ 
+
     

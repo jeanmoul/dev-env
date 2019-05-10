@@ -42,11 +42,11 @@
     url: "{{ docker_ppa_key }}" 
     id: "{{ docker_ppa_id }}" 
     state: present
-  sudo: true
+  become: true
 
 - name: Add docker repository
   apt_repository: repo="{{ docker_ppa }}" state=present
-  sudo: true
+  become: true
 
 
 - name: Install  docker package
@@ -57,7 +57,7 @@
   vars:
     packages: 
     - "docker-ce={{ docker_version|regex_replace('x', '') }}*"
-  sudo: true
+  become: true
   
   
 - name: Check if docker proxy config file already exists
@@ -89,7 +89,7 @@
 
 - name: Prepare docker proxy string setting 
   set_fact:
-    dockerProxyString: "{{ dockerProxyString }}{{ ( my_idx > 0)|ternary(' ','') }}{{ item.key }}={{ item.value }}"
+    dockerProxyString: "{{ dockerProxyString |default('') }}{{ ( my_idx > 0)|ternary(' ','') }}{{ item.key }}={{ item.value }}"
   loop:  "{{ proxy_env | dict2items  }}"
   loop_control:
     index_var: my_idx
