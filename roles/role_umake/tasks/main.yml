@@ -35,7 +35,8 @@
 #  loop: "{{ umake_ide_packages | default([]) |flatten(levels=1)|zip(check_dir_exist.results)|list }}"
 
 - name: Install ide tools
-  shell: umake ide {{ item.0 }} /opt/{{ item.0 }}
+  shell:  echo "N" | umake ide {{ item.0 }} /opt/{{ item.0 }}
+  # no promptless install at this time... (Feature requested)
   when: item.1.stat.exists == false
   ignore_errors: yes 
   loop: "{{ umake_ide_packages | default([]) |flatten(levels=1)|zip(check_dir_exist.results)|list }}"
