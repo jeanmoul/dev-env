@@ -1,0 +1,67 @@
+---
+
+- name: Full packages upgrade
+  apt: 
+    upgrade: full
+  become: true
+  register: dist_upgrade_result
+  
+- debug:
+    var: dist_upgrade_result
+
+- name: clean after error for dist-upgrade
+  command: dpkg --configure -a
+  when: dist_upgrade_result.rc is defined  and dist_upgrade_result.rc == 255
+  
+
+- name: ensure update-manager-core install
+  apt:
+    pkg: update-manager-core
+    state: latest
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version != ubuntu_target_version and  ubuntu_target_version is defined   
+  
+
+- name: Change Prompt status in /etc/update-manager/release-upgrades
+  lineinfile:
+    dest: /etc/update-manager/release-upgrades
+    regexp: "Prompt="
+    line: "Prompt=normal"
+    state: present
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version != ubuntu_target_version and  ubuntu_target_version is defined
+
+#TODO
+# maybe needed in /etc/apt/apt.conf.d/local
+#DPkg::options { "--force-confdef"; "--force-confnew"; }
+
+
+
+- name: Run do-release-upgrade non-interactively.
+  command: do-release-upgrade -f DistUpgradeViewNonInteractive
+  register: release_upgrade_result
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version != ubuntu_target_version and  ubuntu_target_version is defined 
+  
+
+  
+###
+#TODO
+#remove option   #DPkg::options { "--force-confdef"; "--force-confnew"; }
+  
+- name: Reboot the server.
+  command: reboot
+  async: 0
+  poll: 0
+  when: False
+
+#- name: Wait for server to reboot.
+#  wait_for:
+#  host: "{{ ansible_ssh_host }}"
+#  port: 22
+#  state: started
+#  connection: local
+#  become: no
+    
+    
+
+
+
+  
