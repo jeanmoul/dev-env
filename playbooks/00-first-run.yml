@@ -9,9 +9,8 @@
     - { role: docker, tags: docker}
     - { role: vscode, tags: vscode}
     - { role: ca-cert, tags: cert }
-    - { role: role_security_user, tags: create_user}
- #External Roles need proxy to be set   
-    - { role: chaosmail.nodejs, tags: nodejs, failed_when: false  }
+    - { role: role_users, ignore_errors: yes, tags: users }
+    - { role: role_git_hook, tag: git_hook }
   become_user: root
   become: true
   environment: "{{ proxy_env }}"

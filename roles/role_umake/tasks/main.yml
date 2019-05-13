@@ -1,18 +1,43 @@
 ---
 
+#- name: Add an apt key by id from a keyserver
+#  apt_key:
+#    keyserver: keyserver.ubuntu.com
+#    id: 36A1D7869245C8950F966E92D8576A8BA88D21E9
+#
 
-#- name: Add public key
-#  apt_key: url="{{ vscode_ppa_key }}" id="{{ vscode_ppa_id }}" state=present
-#  become: true
+#  
+
+#- apt_repository:
+#    repo: ppa:nginx/stable
+#  become: true  
+
+#proxy pbl , plan b
+- name: copy pgp signature manually
+  copy:
+    src: "umake.pgp"
+    dest: /tmp/umake.pgp
+
+
+- name: Add public key umake
+  apt_key: 
+    file: //tmp/umake.pgp 
+    id: "{{ ubuntu_make_ppa_id }}" 
+    state: present
+  become: true
+
 
 - name: Add ubuntu-make repository
-  apt_repository: repo="{{ ubuntu_make_ppa }}" state=present
+  apt_repository: 
+    repo: "{{ ubuntu_make_ppa }}" 
+    state: present
   become: true
 
 - name: Install  ubuntu-make package
   apt: 
     name: "{{ packages }}" 
     state: latest
+    update_cache: yes
   vars:
     packages: 
     - ubuntu-make
@@ -23,10 +48,11 @@
     path: /opt/{{ item }}
     state: directory
   with_items: "{{ umake_ide_packages | default([]) }}"
+  become: true  
   
 - name: check if already installed
   stat:
-    path: /opt/{{ item }}/bin/
+    path: /opt/{{ item }}/lib/
   with_items: "{{ umake_ide_packages | default([]) }}"
   register: check_dir_exist
 
@@ -40,6 +66,8 @@
   when: item.1.stat.exists == false
   ignore_errors: yes 
   loop: "{{ umake_ide_packages | default([]) |flatten(levels=1)|zip(check_dir_exist.results)|list }}"
+  register: umake_result
+  changed_when: "'already installed' not in umake_result.stdout"
   ## with_together
 
 

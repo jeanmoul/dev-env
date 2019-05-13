@@ -2,6 +2,7 @@
 # Configuration
 
 apt_packages:
+#dev
   - curl
   - gcc
   - make
@@ -12,6 +13,9 @@ apt_packages:
   - net-tools
   - openjdk-11-jdk
   - openjdk-11-jre
+  - maven
+  - gradle
+#tools
   - keepassx
   - filezilla
   - inkscape
@@ -19,6 +23,8 @@ apt_packages:
   - pandoc
   - aptitude
   - git
+  - libxml2-utils 
+# top
   - htop
   - iotop
   - iftop
@@ -26,10 +32,9 @@ apt_packages:
   - coreutils
   - dos2unix
   - libnss3-tools
-  - maven
-  - gradle
-  - zsh
+# terminal
   - whois
+  - zsh
   - colordiff
   - screen
   - tmux
@@ -82,7 +87,7 @@ pip3_packages:
   - fabric
 
 umake_ide_packages:
-  - eclipse
+  - eclipse-jee
   - idea-ultimate
   - atom
   
@@ -102,10 +107,6 @@ timezone: "Europe/Luxembourg"
 ntp_servers:
   - timeserv.cssf.lu
 
-  
-#############################################
-ansible_managed: "This file is managed by ansible !!!!!!!!!!!!!!!!!!!" 
-
 
 ##############################################
 # Default users
@@ -118,7 +119,22 @@ users:
     uid: 1042
     home: /tmp/security
     password: $6$JQEJb0p2$byvrH4k1al9EcEnc1W3AAH3zzFuQjk//B7v5W5xBPLT0b2WKIIt05Cg44D5LX5iDqsxRUx7j5.eG5RSos/b6l1
+    system: yes
     use_sudo: yes
     use_sudo_nopass: yes
-    user_state: present
 
+
+#######
+# ssh conf via willshersystems.sshd
+########
+sshd:
+  ClientAliveInterval: 60
+  Compression: true
+  PrintMotd: true
+  PasswordAuthentication: true #for now
+  
+
+################################
+# Ubuntu version
+################################
+ubuntu_target_version: 19.04

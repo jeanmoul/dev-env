@@ -5,6 +5,8 @@
   apt: 
     update_cache: yes
     cache_valid_time: 7200
+  retries: 5
+  delay: 60
 
 - name: Create `/usr/share/man/man1` directory (required for Java 8)
   file:
@@ -22,6 +24,8 @@
     force: yes
   with_items: "{{ apt_packages | default([]) }}"
   become: true
+  retries: 5
+  delay: 60
  
 ################################
 #  TODO this part need to be improved... 
@@ -74,12 +78,18 @@
     pkg: "{{ item }}"
     state: latest
   loop: "{{ packages_to_update | difference(pinned_packages) }}"
+  retries: 5
+  delay: 60
   
     
 - name: Remove useless packages from the cache
   apt:
     autoclean: yes
+  retries: 5
+  delay: 60
 
 - name: Remove dependencies that are no longer required
   apt:
    autoremove: yes
+  retries: 5
+  delay: 60
