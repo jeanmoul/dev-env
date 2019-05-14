@@ -1,0 +1,125 @@
+#!/bin/bash
+# At root folder project: run ln -s ../../utils/git/pre-commit .git/hooks/pre-commit
+echo "running pre-commit hooks"
+
+STAGED_FILES_CMD=`git diff origin/master --cached --name-only | grep -E "(\.java$)|(pom.xml)"`
+# Determine if a file list is passed
+echo "INPUT: $#"
+if [ "$#" -eq 1 ]
+then
+ oIFS=$IFS
+ IFS='
+ '
+ SFILES="$1"
+ IFS=$oIFS
+fi
+SFILES=${SFILES:-$STAGED_FILES_CMD}
+
+echo "STAGED_FILES_CMD: $STAGED_FILES_CMD, SFILES: $SFILES"
+# Determine whether need run maven java test
+if [ "$SFILES" == "" ]
+then
+ echo "no need to run maven test";
+ exit 0;
+fi
+
+echo "Running maven clean test for errors"
+
+IS_MERGE=0
+if [ -f .git/MERGE_MODE ]; then
+  IS_MERGE=1
+else
+  IS_MERGE=0
+fi
+
+if [ $IS_MERGE -eq 0 ]; then
+  # Stash changes
+  git stash -q --keep-index
+fi
+
+# retrieving current working directory, if don't want to call this hook, run git commit --no-verify
+CWD=`pwd`
+
+set -o pipefail
+PATH_PROJECT="$(pwd)"
+echo $PATH_PROJECT
+ls
+
+STR=$(cat .git/config | grep url)
+if [[ $STR = *"disp-ng"* ]] || [[ $STR = *"pulse-core"* ]] || [[ $STR = *"pulse-web"* ]]  || [[ $STR = *"alpsar"* ]]  || [[ $STR = *"hitec"* ]]; then
+  mvn findbugs:findbugs checkstyle:checkstyle pmd:pmd -Pjenkins | tee /tmp/mvn.log
+  
+  RESULT=$?
+  
+  if [ $IS_MERGE -eq 0 ]; then
+    # Restore changes
+    git stash pop -q
+  fi  
+ 
+  FINDBUGS_RESULT=0
+  for findbugsFile in $(find -name findbugsXml.xml)
+  do
+    increment=$(xmllint --format $findbugsFile | grep instanceOccurrenceNum=  | wc -l)
+    FINDBUGS_RESULT=$((FINDBUGS_RESULT+$increment))
+  done
+ 
+  CHECKSTYLE_RESULT=0
+  for checkstyleFile in $(find -name checkstyle-result.xml)
+  do
+    increment=$(grep "<error" $checkstyleFile | wc -l)
+    CHECKSTYLE_RESULT=$((CHECKSTYLE_RESULT+$increment))
+  done
+
+  PMD_RESULT=0
+  for pmdFile in $(find -name pmd.xml)
+  do
+    increment=$(grep "<violation" $pmdFile | wc -l)
+    PMD_RESULT=$((PMD_RESULT+$increment))
+  done
+
+  #FINDBUGS_RESULT_EXPECTED="$(grep -A 3 "Findbugs" Jenkinsfile | grep unstableTotalAll: | cut -d ' ' -f 6 | cut -d "'" -f 2)"
+  FINDBUGS_RESULT_EXPECTED="$(cat Jenkinsfile | grep "unstableTotalAll" -m 1 | cut -d "," -f 3 | cut -d "'" -f 2)"
+  #CHECKSTYLE_RESULT_EXPECTED="$(grep -A 3 "Checkstyle" Jenkinsfile | grep unstableTotalAll: | cut -d ' ' -f 9 | cut -d "'" -f 2)"
+  CHECKSTYLE_RESULT_EXPECTED="$(cat Jenkinsfile | grep "checkstyle-result" | cut -d "," -f 4 | cut -d "'" -f 2)"
+  #PMD_RESULT_EXPECTED="$(grep -A 3 "PMD" Jenkinsfile | grep unstableTotalAll: | cut -d ' ' -f 9 | cut -d "'" -f 2)"
+  PMD_RESULT_EXPECTED="$(cat Jenkinsfile | grep "pmd.xml" | cut -d "," -f 4 | cut -d "'" -f 2)"
+
+  if [ $FINDBUGS_RESULT_EXPECTED -lt $FINDBUGS_RESULT ] || [ $CHECKSTYLE_RESULT_EXPECTED -lt $CHECKSTYLE_RESULT ] || [ $PMD_RESULT_EXPECTED -lt $PMD_RESULT ] || [ $RESULT -ne 0  ]; then
+    printf "\033[1;31mYour commit was blocked because your code is regressing\033[0m\n"
+    echo "Please adapt your code in order to pass the code quality check"
+    echo "If you want to run yourself the code quality check, use: mvn clean verify -Dmaven.test.skip=true -Pjenkins"
+    
+    if [ $FINDBUGS_RESULT_EXPECTED -lt $FINDBUGS_RESULT ]; then
+      printf "\033[1;31mYou triggered %s warnings but only %s expected for Findbugs\033[1;31m\n" $FINDBUGS_RESULT $FINDBUGS_RESULT_EXPECTED
+    else
+      printf "\e[1;32mYou triggered %s warnings but only %s expected for Findbugs\e[1;32m\n" $FINDBUGS_RESULT $FINDBUGS_RESULT_EXPECTED
+    fi
+
+    if [ $CHECKSTYLE_RESULT_EXPECTED -lt $CHECKSTYLE_RESULT ]; then
+      printf "\033[1;31mYou triggered %s warnings but only %s expected for Checkstyle\033[1;31m\n" $CHECKSTYLE_RESULT $CHECKSTYLE_RESULT_EXPECTED
+    else
+      printf "\e[1;32mYou triggered %s warnings but only %s expected for Checkstyle\e[1;32m\n" $CHECKSTYLE_RESULT $CHECKSTYLE_RESULT_EXPECTED
+    fi
+
+    if [ $PMD_RESULT_EXPECTED -lt $PMD_RESULT ]; then
+      printf "\033[1;31mYou triggered %s warnings but only %s expected for PMD\033[1;31m\n" $PMD_RESULT $PMD_RESULT_EXPECTED
+    else
+      printf "\e[1;32mYou triggered %s warnings but only %s expected for PMD\e[1;32m\n" $PMD_RESULT $PMD_RESULT_EXPECTED
+    fi
+    
+    if [ $RESULT -ne 0 ]; then
+      printf "\033[1;31mYour build failed\033[0m\n"
+    fi
+ 
+    printf "\033[0m"
+    cd $CWD
+    exit 1
+  fi
+  printf "\e[1;32mYour commit has been accepted\e[1;32m\n"
+  printf "\e[1;32mYou triggered %s warnings but only %s expected for Findbugs\e[1;32m\n" $FINDBUGS_RESULT $FINDBUGS_RESULT_EXPECTED
+  printf "\e[1;32mYou triggered %s warnings but only %s expected for Checkstyle\e[1;32m\n" $CHECKSTYLE_RESULT $CHECKSTYLE_RESULT_EXPECTED
+  printf "\e[1;32mYou triggered %s warnings but only %s expected for PMD\e[1;32m\n" $PMD_RESULT $PMD_RESULT_EXPECTED
+fi
+# go back to current working dir
+cd $CWD
+printf "\033[0m"

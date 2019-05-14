@@ -1,0 +1,60 @@
+---
+###
+# Role git hook
+####
+
+- name: install dependencies
+  apt:
+    name: libxml2-utils
+    state: latest
+
+
+- name: git-hooks conf directory creation
+  file:
+    path: /etc/dev-config/git-hooks
+    state: directory
+
+
+- name: pre-commit file  copy
+  copy:
+    dest: /etc/dev-config/git-hooks/pre-commit
+    src : pre-commit
+
+- name: Install git hook
+  git_config:
+    name: core.hooksPath
+    scope: system
+    value: /etc/dev-config/git-hooks
+
+- name: git default push simple
+  git_config:
+    name: push.default
+    scope: system
+    value: simple
+
+- name: git core.editor 
+  git_config:
+    name: core.editor
+    scope: system
+    value: "vim"
+
+
+- name: git lg1 alias
+  git_config:
+    name: alias.lg1
+    scope: system
+    value: "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
+
+
+- name: quality conf directory creation
+  file:
+    path: /etc/dev-config/quality
+    state: directory
+    
+
+
+#   file { '/etc/profile.d/git-config.sh':
+#	ensure => 'present',
+#	source => 'puppet:///modules/role_git_hook/git-config.sh'
+#   }
+
