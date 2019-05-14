@@ -3,12 +3,12 @@
   connection: local
   roles:
     - { role: role_base, tags: [ base, cert ] }
-    - { role: apt, tags: apt }
-    - { role: python, tags: python }
+    - { role: role_apt, tags: apt }
+    - { role: role_python, tags: python }
     - chromium
-    - { role: docker, tags: docker}
-    - { role: vscode, tags: vscode}
-    - { role: ca-cert, tags: cert }
+    - { role: role_docker, tags: docker}
+    - { role: role_vscode, tags: vscode}
+    - { role: role_ca-cert, tags: cert }
     - { role: role_users, ignore_errors: yes, tags: users }
     - { role: role_umake, tags: umake}
     - { role: role_git_hook, tags: git_hook }
