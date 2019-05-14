@@ -137,4 +137,10 @@ sshd:
 ################################
 # Ubuntu version
 ################################
-ubuntu_target_version: 19.04
+ubuntu_target_version: "19.04"
+
+
+################################
+# foreman conf
+################################
+foreman_url: https://stldep01.cssf.lu

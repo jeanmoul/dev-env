@@ -89,11 +89,14 @@
 
 - name: Prepare docker proxy string setting 
   set_fact:
-    dockerProxyString: "{{ dockerProxyString |default('') }}{{ ( my_idx > 0)|ternary(' ','') }}{{ item.key }}={{ item.value }}"
+    dockerProxyString: "{{ dockerProxyString |default('') }}{{ ( my_idx > 0)|ternary(' ','') }}\"{{ item.key }}={{ item.value }}\""
   loop:  "{{ proxy_env | dict2items  }}"
   loop_control:
     index_var: my_idx
-    
+  
+- debug:
+    var:  dockerProxyString
+     
 - name: Configure the Docker storage driver
   copy:
     src: "docker/daemon.json"
@@ -106,7 +109,7 @@
     create: yes
     block: |
       [Service]
-      Environment="{{ dockerProxyString }}"
+      Environment={{ dockerProxyString }}
   when: proxyConfigManaged
   register: proxyConfigChanged
   notify: docker conf changed

@@ -1,16 +1,20 @@
 ---
 
+- name: Fix bug while prompty something even asked not to during do-release-upgrade
+  lineinfile:
+    dest:  /etc/apt/apt.conf.d/local
+    line: 'Dpkg::options { "--force-confdef"; "--force-confnew"; }'
+    create: yes
+
 - name: Full packages upgrade
   apt: 
     upgrade: full
   become: true
+  ignore_errors: yes
   register: dist_upgrade_result
-  
-- debug:
-    var: dist_upgrade_result
-
+ 
 - name: clean after error for dist-upgrade
-  command: dpkg --configure -a
+  command: sudo dpkg  --configure -a --force-confnew  --force-confnew
   when: dist_upgrade_result.rc is defined  and dist_upgrade_result.rc == 255
   
 
@@ -29,11 +33,14 @@
     state: present
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version != ubuntu_target_version and  ubuntu_target_version is defined
 
-#TODO
-# maybe needed in /etc/apt/apt.conf.d/local
-#DPkg::options { "--force-confdef"; "--force-confnew"; }
+- debug: 
+    var: ansible_distribution
+    
+- debug:
+    var: ansible_distribution_version
 
-
+- debug:
+    var: ubuntu_target_version
 
 - name: Run do-release-upgrade non-interactively.
   command: do-release-upgrade -f DistUpgradeViewNonInteractive
@@ -50,7 +57,7 @@
   command: reboot
   async: 0
   poll: 0
-  when: False
+  when: release_upgrade_result is succeeded
 
 #- name: Wait for server to reboot.
 #  wait_for:

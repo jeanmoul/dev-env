@@ -11,6 +11,9 @@
     - { role: ca-cert, tags: cert }
     - { role: role_users, ignore_errors: yes, tags: users }
     - { role: role_git_hook, tag: git_hook }
+  tasks:
+     - name: Reboot 
+       reboot:
   become_user: root
   become: true
   environment: "{{ proxy_env }}"

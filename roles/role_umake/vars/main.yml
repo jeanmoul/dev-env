@@ -1,6 +1,6 @@
 ---
 
-#ubuntu_make_ppa: "deb http://ppa.launchpad.net/lyzardking/ubuntu-make/ubuntu bionic main"
-ubuntu_make_ppa: ppa:lyzardking/ubuntu-make
+ubuntu_make_ppa: "deb http://ppa.launchpad.net/lyzardking/ubuntu-make/ubuntu bionic main"
+#ubuntu_make_ppa: ppa:lyzardking/ubuntu-make
 ubuntu_make_key_server: keyserver.ubuntu.com
-ubuntu_make_ppa_id: "0x43fdbc385ada701f"
+ubuntu_make_ppa_id: "5ada701f"

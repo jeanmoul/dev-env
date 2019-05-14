@@ -7,46 +7,47 @@
 #
 
 #  
-
+#available under disco repo, no need to add extra repo
 #- apt_repository:
 #    repo: ppa:nginx/stable
 #  become: true  
 
-#proxy pbl , plan b
-- name: copy pgp signature manually
-  copy:
-    src: "umake.pgp"
-    dest: /tmp/umake.pgp
-
-
-- name: Add public key umake
-  apt_key: 
-    file: //tmp/umake.pgp 
-    id: "{{ ubuntu_make_ppa_id }}" 
-    state: present
-  become: true
-
-
-- name: Add ubuntu-make repository
-  apt_repository: 
-    repo: "{{ ubuntu_make_ppa }}" 
-    state: present
-  become: true
-
-- name: Install  ubuntu-make package
-  apt: 
-    name: "{{ packages }}" 
-    state: latest
-    update_cache: yes
-  vars:
-    packages: 
-    - ubuntu-make
-  become: true  
+##proxy pbl , plan b
+#- name: copy pgp signature manually
+#  copy:
+#    src: "umake.pgp"
+#    dest: /tmp/umake.pgp
+#
+#
+#- name: Add public key umake
+#  apt_key: 
+#    file: //tmp/umake.pgp 
+#    id: "{{ ubuntu_make_ppa_id }}" 
+#    state: present
+#  become: true
+#
+#
+#- name: Add ubuntu-make repository
+#  apt_repository: 
+#    repo: "{{ ubuntu_make_ppa }}" 
+#    state: present
+#  become: true
+#
+#- name: Install  ubuntu-make package
+#  apt: 
+#    name: "{{ packages }}" 
+#    state: latest
+#    update_cache: yes
+#  vars:
+#    packages: 
+#    - ubuntu-make
+#  become: true  
   
 - name: Prepare folders for tools
   file:  
     path: /opt/{{ item }}
     state: directory
+    mode: 0777
   with_items: "{{ umake_ide_packages | default([]) }}"
   become: true  
   
@@ -56,18 +57,19 @@
   with_items: "{{ umake_ide_packages | default([]) }}"
   register: check_dir_exist
 
-#- debug:
-#    msg: "umake ide {{ item.1 }} /opt/{{ item.0 }}"
-#  loop: "{{ umake_ide_packages | default([]) |flatten(levels=1)|zip(check_dir_exist.results)|list }}"
+- debug:
+    msg: "ITEM 1  {{ item.0 }} \n-----------------\n ITEM 0{{ item.0 }}"
+  loop: "{{ umake_ide_packages | default([]) |flatten(levels=1)|zip(check_dir_exist.results)|list }}"
 
 - name: Install ide tools
-  shell:  echo "N" | umake ide {{ item.0 }} /opt/{{ item.0 }}
+  shell:   echo "N" | umake ide {{ item.0 }} /opt/{{ item.0 }} 
   # no promptless install at this time... (Feature requested)
   when: item.1.stat.exists == false
   ignore_errors: yes 
   loop: "{{ umake_ide_packages | default([]) |flatten(levels=1)|zip(check_dir_exist.results)|list }}"
   register: umake_result
   changed_when: "'already installed' not in umake_result.stdout"
+  #  become: true no need because of | in the command the folder is in 777
   ## with_together
 
 
