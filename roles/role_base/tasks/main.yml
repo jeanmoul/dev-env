@@ -37,24 +37,53 @@
   lineinfile:
     dest: /etc/environment
     line: "{{ item.key }}={{ item.value }}"
-  loop:  "{{ proxy_env | dict2items  }}" 
-  
-############################################
-# foreman config
-############################################
-- name: activate foreman callback in ansible.cfg
-  blockinfile:
-    path: /etc/ansible/ansible.cfg
-    create: yes
-    block: |
-      [defaults]
-      callback_whitelist = foreman
-      [callback_foreman]
-      url = "{{ foreman_url }}"
-      ssl_cert = /etc/foreman-proxy/ssl_cert.pem
-      ssl_key = /etc/foreman-proxy/ssl_key.pem
-      verify_certs = /etc/foreman-proxy/ssl_ca.pem
-  when: foreman_url is defined
- 
+  loop:  "{{ proxy_env | dict2items  }}"
 
-    
+
+
+#############################################
+## foreman config
+#############################################
+#
+#- name: Add public key
+#  apt_key:
+#    url: "{{ foreman_ppa_key }}"
+#    id: "{{ foreman_ppa_id }}"
+#    state: present
+#  become: true
+#  when: foreman_url is defined
+#
+#- name: Add foreman repository
+#  apt_repository:
+#    repo: "{{ foreman_ppa }}"
+#    state: present
+#  become: true
+#  when: foreman_url is defined
+#
+#- name: Install  ruby-foreman-discovery package
+#  apt:
+#    name: "{{ packages }}"
+#    state: present
+#    update-cache: yes
+#  vars:
+#    packages:
+#    - "ruby-foreman-discovery"
+#  become: true
+#  when: foreman_url is defined
+#
+#- name: activate foreman callback in ansible.cfg
+#  blockinfile:
+#    path: /etc/ansible/ansible.cfg
+#    create: yes
+#    block: |
+#      [defaults]
+#      callback_whitelist = foreman
+#      [callback_foreman]
+#      url = "{{ foreman_url }}"
+#      ssl_cert = /etc/foreman-proxy/ssl_cert.pem
+#      ssl_key = /etc/foreman-proxy/ssl_key.pem
+#      verify_certs = /etc/foreman-proxy/ssl_ca.pem
+#  when: foreman_url is defined
+#  become: true
+#
+

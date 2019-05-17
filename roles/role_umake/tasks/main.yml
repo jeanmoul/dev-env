@@ -6,11 +6,11 @@
 #    id: 36A1D7869245C8950F966E92D8576A8BA88D21E9
 #
 
-#  
+#
 #available under disco repo, no need to add extra repo
 #- apt_repository:
 #    repo: ppa:nginx/stable
-#  become: true  
+#  become: true
 
 ##proxy pbl , plan b
 #- name: copy pgp signature manually
@@ -20,37 +20,37 @@
 #
 #
 #- name: Add public key umake
-#  apt_key: 
-#    file: //tmp/umake.pgp 
-#    id: "{{ ubuntu_make_ppa_id }}" 
+#  apt_key:
+#    file: //tmp/umake.pgp
+#    id: "{{ ubuntu_make_ppa_id }}"
 #    state: present
 #  become: true
 #
 #
 #- name: Add ubuntu-make repository
-#  apt_repository: 
-#    repo: "{{ ubuntu_make_ppa }}" 
+#  apt_repository:
+#    repo: "{{ ubuntu_make_ppa }}"
 #    state: present
 #  become: true
 #
-#- name: Install  ubuntu-make package
-#  apt: 
-#    name: "{{ packages }}" 
-#    state: latest
-#    update_cache: yes
-#  vars:
-#    packages: 
-#    - ubuntu-make
-#  become: true  
-  
+- name: Install  ubuntu-make package
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - ubuntu-make
+  become: true
+
 - name: Prepare folders for tools
-  file:  
+  file:
     path: /opt/{{ item }}
     state: directory
     mode: 0777
   with_items: "{{ umake_ide_packages | default([]) }}"
-  become: true  
-  
+  become: true
+
 - name: check if already installed
   stat:
     path: /opt/{{ item }}/lib/
@@ -62,10 +62,10 @@
   loop: "{{ umake_ide_packages | default([]) |flatten(levels=1)|zip(check_dir_exist.results)|list }}"
 
 - name: Install ide tools
-  shell:   echo "N" | umake ide {{ item.0 }} /opt/{{ item.0 }} 
+  shell:   echo "N" | umake ide {{ item.0 }} /opt/{{ item.0 }}
   # no promptless install at this time... (Feature requested)
-  when: item.1.stat.exists == false
-  ignore_errors: yes 
+  when: not item.1.stat.exists
+  ignore_errors: yes
   loop: "{{ umake_ide_packages | default([]) |flatten(levels=1)|zip(check_dir_exist.results)|list }}"
   register: umake_result
   changed_when: "'already installed' not in umake_result.stdout"

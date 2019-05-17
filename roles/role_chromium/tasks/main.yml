@@ -2,9 +2,9 @@
 # Install & Configure Chromium
 
 - name: Install latest chromium package with codecs
-  apt: 
-    name: "{{ packages }}" 
-    state: present 
+  apt:
+    name: "{{ packages }}"
+    state: present
     force: yes
   vars:
     packages:
@@ -17,7 +17,7 @@
   stat:
     path: "{{ ansible_env.HOME }}/.profile"
   register: user_profile
- 
+
 - name: Export CHROME_BIN chrome executable
   lineinfile:
     dest: "{{ ansible_env.HOME }}/.profile"

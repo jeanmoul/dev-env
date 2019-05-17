@@ -5,7 +5,7 @@
     name: "{{ packages }}"
     state: absent
   vars:
-    packages:  
+    packages:
     - docker
     - docker-engine
     - docker.io
@@ -13,13 +13,13 @@
     - containerd
     - runc
   become: true
-  
+
 - name: install dependencies
   apt:
     name: "{{ packages }}"
     state: present
   vars:
-    packages:  
+    packages:
     - apt-transport-https
     - ca-certificates
     - curl
@@ -38,9 +38,9 @@
 # Install & Configure Docker
 
 - name: Add public key
-  apt_key: 
-    url: "{{ docker_ppa_key }}" 
-    id: "{{ docker_ppa_id }}" 
+  apt_key:
+    url: "{{ docker_ppa_key }}"
+    id: "{{ docker_ppa_id }}"
     state: present
   become: true
 
@@ -50,35 +50,35 @@
 
 
 - name: Install  docker package
-  apt: 
-    name: "{{ packages }}" 
+  apt:
+    name: "{{ packages }}"
     state: present
     update-cache: yes
   vars:
-    packages: 
+    packages:
     - "docker-ce={{ docker_version|regex_replace('x', '') }}*"
   become: true
-  
-  
+
+
 - name: Check if docker proxy config file already exists
   stat:
     path: "{{ docker_proxy_conf }}"
   register: dockerhttpconfexists
-  
+
 
 - name: Create docker proxy config directory
   file:
-    path:  "{{ docker_proxy_conf | dirname }}"   
+    path:  "{{ docker_proxy_conf | dirname }}"
     state: directory
     mode: 0755
-  when: dockerhttpconfexists.stat.exists == False
+  when: not dockerhttpconfexists.stat.exists
 
 - name: Create empty docker proxy config file if not existing
   file:
     path: "{{ docker_proxy_conf }}"
     state: touch
-  when: dockerhttpconfexists.stat.exists == False
-  
+  when: not dockerhttpconfexists.stat.exists
+
 - name: Check if docker http proxy config was already written by ansible
   lineinfile:
     path:  "{{ docker_proxy_conf }}"
@@ -87,16 +87,14 @@
   check_mode: yes
   register: proxyConfigManaged
 
-- name: Prepare docker proxy string setting 
+- name: Prepare docker proxy string setting
   set_fact:
     dockerProxyString: "{{ dockerProxyString |default('') }}{{ ( my_idx > 0)|ternary(' ','') }}\"{{ item.key }}={{ item.value }}\""
   loop:  "{{ proxy_env | dict2items  }}"
   loop_control:
     index_var: my_idx
-  
-- debug:
-    var:  dockerProxyString
-     
+
+
 - name: Configure the Docker storage driver
   copy:
     src: "docker/daemon.json"

@@ -6,19 +6,19 @@
   become: true
 
 - name: Add vscode repository
-  apt_repository: 
-    repo: "{{ vscode_ppa }}" 
+  apt_repository:
+    repo: "{{ vscode_ppa }}"
     state: present
     filename: vscode.list
   become: true
 
 - name: Install latest vscode package
-  apt: 
-    name: "{{ packages }}" 
-    state: latest
+  apt:
+    name: "{{ packages }}"
+    state: present
     update-cache: yes
   vars:
-    packages: 
+    packages:
     - code
   become: true
-  
+

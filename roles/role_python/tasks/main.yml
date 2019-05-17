@@ -1,9 +1,9 @@
 ---
 
 - name: Install python
-  apt: 
+  apt:
     name: "{{ packages }}"
-    state: latest
+    state: present
     force: yes
   vars:
     packages:

@@ -7,13 +7,13 @@
   - name: Install ca package
     apt:
       name: ca-certificates
-      state: latest
-      
+      state: present
+
   - name: cssf certificate folder
     file:
       path: /usr/local/share/ca-certificates/CSSF
       state: directory
-      mode: 755
+      mode: 0755
 
   - name: Copy CSSF's self signed certificates to trusted CA path of the OS
     copy:
@@ -22,11 +22,12 @@
       mode: 0644
     with_fileglob:
       - "certificates/*.crt"
-    register: certs  
+    register: certs
+    notify: certificates changed
 
-  - name: Update trusted CA
-    shell: /usr/sbin/update-ca-certificates
-    when: certs.changed
+#  - name: Update trusted CA
+#    shell: /usr/sbin/update-ca-certificates
+#    when: certs.changed
 
 ########################################################
 # firefox
@@ -36,9 +37,9 @@
     file:
       path: /usr/lib/mozilla/certificates/
       state: directory
-      
 
-  - name: Add cert in Firefox 
+
+  - name: Add cert in Firefox
     file:
       src: '{{ item }}'
       dest: /usr/lib/mozilla/certificates/{{ item | basename  }}
@@ -46,6 +47,5 @@
       state: link
     with_fileglob:
       - "/usr/local/share/ca-certificates/CSSF/*.crt"
-    when: '"firefox" in ansible_facts.packages'
-      
-    
+    when: 'ansible_facts.packages is defined and "firefox" in ansible_facts.packages'
+

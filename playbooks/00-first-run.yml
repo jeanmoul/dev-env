@@ -1,18 +1,18 @@
 - name: Install Common Development Tools
-  hosts: 127.0.0.1
-  connection: local
+  hosts: all
   roles:
     - { role: role_base, tags: [ base, cert ] }
     - { role: role_apt, tags: apt }
     - { role: role_python, tags: python }
-    - chromium
+    - role_chromium
     - { role: role_docker, tags: docker}
     - { role: role_vscode, tags: vscode}
     - { role: role_ca-cert, tags: cert }
     - { role: role_users, ignore_errors: yes, tags: users }
     - { role: role_git_hook, tag: git_hook }
+    - { role: role_foreman_cb, tags: foreman_cb}
   tasks:
-     - name: Reboot 
+     - name: Reboot
        reboot:
   become_user: root
   become: true

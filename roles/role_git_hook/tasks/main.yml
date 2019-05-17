@@ -6,7 +6,7 @@
 - name: install dependencies
   apt:
     name: libxml2-utils
-    state: latest
+    state: present
 
 
 - name: git-hooks conf directory creation
@@ -32,7 +32,7 @@
     scope: system
     value: simple
 
-- name: git core.editor 
+- name: git core.editor
   git_config:
     name: core.editor
     scope: system
@@ -50,7 +50,7 @@
   file:
     path: /etc/dev-config/quality
     state: directory
-    
+
 
 
 #   file { '/etc/profile.d/git-config.sh':

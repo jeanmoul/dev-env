@@ -23,7 +23,7 @@ apt_packages:
   - pandoc
   - aptitude
   - git
-  - libxml2-utils 
+  - libxml2-utils
 # top
   - htop
   - iotop
@@ -46,6 +46,12 @@ apt_packages:
   - ufw
   - unattended-upgrades
   - jq
+# ansible dependencies
+  - python3-openssl
+  - python-openssl
+  - python-requests
+  - python3-requests
+  - python-docker
 #for the example of pinning version
 #  - { name: passwd, version: '1:4.5-1ubuntu1' }
 
@@ -68,6 +74,7 @@ npm_packages:
   - react-i18next
   - react-bootstrap
   - react-axios
+ 
 
 pip3_packages:
   - pipenv
@@ -85,13 +92,17 @@ pip3_packages:
   - beautifulsoup4
   - jinja2
   - fabric
+  - docker-compose
 
 umake_ide_packages:
   - eclipse-jee
   - idea-ultimate
   - atom
-  
-##############################################
+
+#
+
+
+#############################################
 proxy_url: "http://proxy.cssf.lu:8080"
 proxy_env:
   http_proxy: "{{ proxy_url }}"
@@ -100,7 +111,7 @@ proxy_env:
   HTTP_PROXY: "{{ proxy_url }}"
   no_proxy: "127.0.0.1,localhost,.cssf.lu"
   NO_PROXY: "127.0.0.1,localhost,.cssf.lu"
-group_ips: "{{ groups['all'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | difference([' ', '']) | join(',') }}"  
+group_ips: "{{ groups['all'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | difference([' ', '']) | join(',') }}"
 
 ##############################################
 timezone: "Europe/Luxembourg"
@@ -112,6 +123,13 @@ ntp_servers:
 # Default users
 #############################################
 users:
+  - name: jsusset
+    username: jsusset
+    comment: local user for Jean-Sebastien Susset
+    groups: [sudo, docker]
+    use_sudo: yes
+    ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQBzWHP5wVagzG7shu1FNOlqg/qEzausbOZlLGaHSt8QyXv3JMSwYBu+dXQTCyLE0UO1PFJ0Sd445UmImpDYWluQAzoSSMEmn1X8xQ4CYjzh/kNKl3wm1RGeZmc/mWJskKpU/kwXyVtZ//2Ms342DQtaaCWPXNgh3PfkEodjM3H7OXdV6GBd2kuQTn9Q7omuUxB2tQojaDpwhvRe+t7D3+LcYTlSQF2vNUE16hCDiA0jP9J/MHdZvfk06hTWylYuCtBPyET7/gRYVF21fBcnIr2t8M6lTfoZdXpozARlhDjinp8PskX+dc921sU8v0Wlp0RwxYs+RVl86HD1M0NSmZkN jsusset"
+     
   - name: "Security User"
     username: security
     comment: Security User
@@ -121,7 +139,7 @@ users:
     password: $6$JQEJb0p2$byvrH4k1al9EcEnc1W3AAH3zzFuQjk//B7v5W5xBPLT0b2WKIIt05Cg44D5LX5iDqsxRUx7j5.eG5RSos/b6l1
     system: yes
     use_sudo: yes
-    use_sudo_nopass: yes
+    use_sudo_nopass: yes  
 
 
 #######
@@ -132,7 +150,7 @@ sshd:
   Compression: true
   PrintMotd: true
   PasswordAuthentication: true #for now
-  
+
 
 ################################
 # Ubuntu version
@@ -143,4 +161,4 @@ ubuntu_target_version: "19.04"
 ################################
 # foreman conf
 ################################
-foreman_url: https://stldep01.cssf.lu
+foreman_url: https://127.0.0.1

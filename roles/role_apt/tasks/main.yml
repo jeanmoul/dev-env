@@ -2,7 +2,7 @@
 # Install & Configure Common Tools
 
 - name: APT update cache
-  apt: 
+  apt:
     update_cache: yes
     cache_valid_time: 7200
   retries: 5
@@ -26,9 +26,9 @@
   become: true
   retries: 5
   delay: 60
- 
+
 ################################
-#  TODO this part need to be improved... 
+#  TODO this part need to be improved...
 ###############################
 
 
@@ -47,10 +47,10 @@
    selection: install
 
 - name: Removed pin
-  shell: apt-mark unhold \* 
+  shell: apt-mark unhold \*
   become: true
-  
-  
+
+
 - name: Pin versions
   dpkg_selections:
    name: "{{ item }}"
@@ -59,15 +59,15 @@
 
 
 
-#### 
-# packages to upgrade 
+####
+# packages to upgrade
 ########################################
 - name: Check for upgradeable
   shell: "apt list --upgradable"
   register: upgradeable
   become: true
   changed_when: False
-  
+
 - name: package to update
   set_fact:
     packages_to_update: "{{ upgradeable.stdout_lines | map('regex_replace','(^.*)/(.*$)', '\\1') | reject('equalto','Listing...')   |list  }}"
@@ -80,8 +80,8 @@
   loop: "{{ packages_to_update | difference(pinned_packages) }}"
   retries: 5
   delay: 60
-  
-    
+
+
 - name: Remove useless packages from the cache
   apt:
     autoclean: yes

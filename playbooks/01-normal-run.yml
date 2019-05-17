@@ -1,24 +1,24 @@
 - name: Install Common Development Tools
-  hosts: 127.0.0.1
-  connection: local
+  hosts: all
   roles:
     - { role: role_base, tags: [ base, cert ] }
     - { role: role_apt, tags: apt }
     - { role: role_python, tags: python }
-    - chromium
+    - role_chromium
     - { role: role_docker, tags: docker}
     - { role: role_vscode, tags: vscode}
     - { role: role_ca-cert, tags: cert }
     - { role: role_users, ignore_errors: yes, tags: users }
     - { role: role_umake, tags: umake}
     - { role: role_git_hook, tags: git_hook }
- 
-    #External Roles need proxy to be set   
+    - { role: role_foreman_cb, tags: foreman_cb}
+    #External Roles need proxy to be set
     - { role: chaosmail.nodejs, tags: nodejs  }
     - { role: willshersystems.sshd, tags: sshd }
-    
-    - { role: role_ubuntu_upgrade, tags: upgrade, 
-           when: ansible_distribution == 'Ubuntu' and ansible_distribution_version != ubuntu_target_version and  ubuntu_target_version is defined  } 
+
+
+    - { role: role_ubuntu_upgrade, tags: upgrade,
+           when: ansible_distribution == 'Ubuntu' and ansible_distribution_version != ubuntu_target_version and  ubuntu_target_version is defined  }
   become_user: root
   become: true
   environment: "{{ proxy_env }}"
