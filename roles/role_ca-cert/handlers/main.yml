@@ -1,0 +1,4 @@
+---
+- name: reload /usr/sbin/update-ca-certificates
+  shell: /usr/sbin/update-ca-certificates
+  listen: certificates changed
