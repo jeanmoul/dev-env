@@ -9,7 +9,7 @@
     - { role: role_vscode, tags: vscode}
     - { role: role_ca-cert, tags: cert }
     - { role: role_users, ignore_errors: yes, tags: users }
-    - { role: role_git_hook, tag: git_hook }
+    - { role: role_git_config, tag: git_config }
     - { role: role_foreman_cb, tags: foreman_cb}
   tasks:
      - name: Reboot

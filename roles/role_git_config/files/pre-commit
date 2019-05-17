@@ -46,7 +46,7 @@ echo $PATH_PROJECT
 ls
 
 STR=$(cat .git/config | grep url)
-if [[ $STR = *"disp-ng"* ]] || [[ $STR = *"pulse-core"* ]] || [[ $STR = *"pulse-web"* ]]  || [[ $STR = *"alpsar"* ]]  || [[ $STR = *"hitec"* ]]; then
+if [[ $STR = *"mcr"* ]] || [[ $STR = *"foo"* ]] || [[ $STR = *"bar"* ]]; then
   mvn findbugs:findbugs checkstyle:checkstyle pmd:pmd -Pjenkins | tee /tmp/mvn.log
   
   RESULT=$?
