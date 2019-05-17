@@ -1,0 +1,8 @@
+See pom.xml maven-pmd-plugin rulesets
+
+https://github.com/pmd/pmd/tree/master/pmd-java/src/main/resources/rulesets/java
+
+https://pmd.github.io/pmd-6.2.0/pmd_rules_java.html
+
+http://pmd.sourceforge.net/pmd-4.3.0/suppressing.html
+

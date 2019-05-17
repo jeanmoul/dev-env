@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<ruleset name="Empty Code" xmlns="http://pmd.sourceforge.net/ruleset/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+  <description>
+The Empty Code ruleset contains rules that find empty statements of any kind (empty method,
+empty block statement, empty try or catch block,...).
+  </description>
+
+  <!-- Rules, that have been moved into a category -->
+
+  <!--  even complains when there is comment inside. -->
+  <!-- <rule ref="category/java/errorprone.xml/EmptyCatchBlock" deprecated="true" /> -->
+
+  <rule ref="category/java/errorprone.xml/EmptyFinallyBlock" deprecated="true" />
+
+  <!--  too much work for now. -->
+  <!-- <rule ref="category/java/errorprone.xml/EmptyIfStmt" deprecated="true" /> -->
+
+  <rule ref="category/java/errorprone.xml/EmptyInitializer" deprecated="true" />
+  <rule ref="category/java/errorprone.xml/EmptyStatementBlock" deprecated="true" />
+  <rule ref="category/java/errorprone.xml/EmptyStatementNotInLoop" deprecated="true" />
+  <rule ref="category/java/errorprone.xml/EmptyInitializer" name="EmptyStaticInitializer" deprecated="true" />
+  <rule ref="category/java/errorprone.xml/EmptySwitchStatements" deprecated="true" />
+  <rule ref="category/java/errorprone.xml/EmptySynchronizedBlock" deprecated="true" />
+  <rule ref="category/java/errorprone.xml/EmptyTryBlock" deprecated="true" />
+  <rule ref="category/java/errorprone.xml/EmptyWhileStmt" deprecated="true" />
+
+</ruleset>

@@ -1,0 +1,33 @@
+---
+- name: conf directory creation for dev
+  file:
+    path: /etc/dev-config
+    state: directory
+
+- name: conf directory creation for code quality-config
+  file:
+    path: /etc/dev-config/code-quality-config
+    state: directory
+
+- name: conf directory creation for checkstyle
+  file:
+    path: /etc/dev-config/code-quality-config/checkstyle
+    state: directory
+    
+- name: copy file for checkstyle conf
+  copy:
+    dest: /etc/dev-config/code-quality-config/checkstyle/checkstyle.xml
+    src : checkstyle/checkstyle.xml
+
+- name: conf directory creation for pmd
+  file:
+    path: /etc/dev-config/code-quality-config/pmd
+    state: directory
+
+- name: copy file for pmd conf
+  copy:
+    dest: /etc/dev-config/code-quality-config/pmd/
+    src : {{ item }}  
+  with_fileglob:
+      - "pmd/*.xml"
+
