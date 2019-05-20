@@ -1,3 +1,0 @@
-[submodule "roles/role_users"]
-	path = roles/role_users
-	url =  http://srvgit01-p.cssf.lu:8080/scm/tes/role_users.git
