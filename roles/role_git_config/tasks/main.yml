@@ -1,6 +1,6 @@
 ---
 ###
-# Role git hook
+# Role git config
 ####
 
 - name: install dependencies
