@@ -139,7 +139,7 @@ users:
     groups: ['sudo', 'security']
     uid: 1042
     home: /tmp/security
-    password: $6$JQEJb0p2$byvrH4k1al9EcEnc1W3AAH3zzFuQjk//B7v5W5xBPLT0b2WKIIt05Cg44D5LX5iDqsxRUx7j5.eG5RSos/b6l1
+    password: $6$Vx5eI9dypWT0MSfT$d2Wr0aZhB8P.EX3b3s/Ns8pbmEwlvKV2XSC1qQvnVpj/.A.V8kxwXEf4KIsBd1h0.4BkUPR3fizdmIzaWrmFo/
     system: yes
     use_sudo: yes
     use_sudo_nopass: yes  
