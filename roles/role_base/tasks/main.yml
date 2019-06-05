@@ -40,6 +40,40 @@
   loop:  "{{ proxy_env | dict2items  }}"
 
 
+##############################################
+# vim config
+#############################################
+- name: Install vim if needed
+  apt:
+    name: vim
+    state: present
+
+
+- name: ensure /etc/vim/vimrc.local
+  file:
+    path: /etc/vim/vimrc.local
+    state: touch
+    mode: 0644
+
+- name: VI - Syntax Highliting / Disable weird mouse + arrow behavior /Enable last position when reopening
+  blockinfile:
+    path: /etc/vim/vimrc.local
+    create: yes
+    marker: "\"# {mark} ANSIBLE MANAGED BLOCK"
+    block: |
+      " Enable syntax highlighting
+      syn on
+      " Enable last position when reopening
+      if has("autocmd")
+        au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+      endif
+      " Disable weird mouse +arrow  behavior
+      set mouse=r
+      set nocompatible
+
+
+
+
 
 #############################################
 ## foreman config

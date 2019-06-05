@@ -8,6 +8,7 @@ apt_packages:
   - make
   - nmap
   - wget
+  - vim
   - build-essential
   - software-properties-common
   - net-tools
@@ -112,8 +113,8 @@ proxy_env:
   https_proxy: "{{ proxy_url }}"
   HTTPS_PROXY: "{{ proxy_url }}"
   HTTP_PROXY: "{{ proxy_url }}"
-  no_proxy: "127.0.0.1,localhost,.cssf.lu"
-  NO_PROXY: "127.0.0.1,localhost,.cssf.lu"
+  no_proxy: "127.0.0.1,localhost,.cssf.lu,10.0.0.0/8"
+  NO_PROXY: "127.0.0.1,localhost,.cssf.lu,10.0.0.0/8"
 group_ips: "{{ groups['all'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | difference([' ', '']) | join(',') }}"
 
 ##############################################
@@ -126,12 +127,12 @@ ntp_servers:
 # Default users
 #############################################
 users:
-  - name: jsusset
-    username: jsusset
-    comment: local user for Jean-Sebastien Susset
+  - name:  create "{{ local_user }}"
+    username: "{{ local_user }}"
+    comment: local user for "{{ local_user }}"
     groups: [sudo, docker]
     use_sudo: yes
-    ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQBzWHP5wVagzG7shu1FNOlqg/qEzausbOZlLGaHSt8QyXv3JMSwYBu+dXQTCyLE0UO1PFJ0Sd445UmImpDYWluQAzoSSMEmn1X8xQ4CYjzh/kNKl3wm1RGeZmc/mWJskKpU/kwXyVtZ//2Ms342DQtaaCWPXNgh3PfkEodjM3H7OXdV6GBd2kuQTn9Q7omuUxB2tQojaDpwhvRe+t7D3+LcYTlSQF2vNUE16hCDiA0jP9J/MHdZvfk06hTWylYuCtBPyET7/gRYVF21fBcnIr2t8M6lTfoZdXpozARlhDjinp8PskX+dc921sU8v0Wlp0RwxYs+RVl86HD1M0NSmZkN jsusset"
+    
      
   - name: "Security User"
     username: security
@@ -161,7 +162,3 @@ sshd:
 ubuntu_target_version: "19.04"
 
 
-################################
-# foreman conf
-################################
-foreman_url: https://127.0.0.1
