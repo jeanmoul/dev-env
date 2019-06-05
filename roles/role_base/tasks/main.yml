@@ -6,6 +6,26 @@
   package_facts:
     manager: auto
 
+
+##############
+# username check
+##############
+- fail: msg="Bailing out. this play requires 'username'"
+  when: username is not defined
+
+
+##################
+# hostname
+##################
+- fail: msg="Bailing out. this play requires 'pc_name'"
+  when: pc_name is not defined
+
+- name: Change hostname
+  hostname:
+    name: "{{ pc_name }}"
+
+
+
 ##########################################
 #   NTP client conf
 ##########################################
