@@ -10,14 +10,16 @@
 ##############
 # username check
 ##############
-- fail: msg="Bailing out. this play requires 'username'"
+- name: username var is present
+  fail: msg="Bailing out. this play requires 'username'"
   when: username is not defined
 
 
 ##################
 # hostname
 ##################
-- fail: msg="Bailing out. this play requires 'pc_name'"
+- name: pc_name var is present
+  fail: msg="Bailing out. this play requires 'pc_name'"
   when: pc_name is not defined
 
 - name: Change hostname

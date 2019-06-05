@@ -130,9 +130,9 @@ users:
   - name:  create "{{ username }}"
     username: "{{ username }}"
     comment: local user for "{{ username }}"
+    password: "{{ username | password_hash('sha512', username) }}"
     groups: [sudo, docker]
     use_sudo: yes
-    
      
   - name: "Security User"
     username: security
