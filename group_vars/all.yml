@@ -107,7 +107,7 @@ umake_ide_packages:
 
 
 #############################################
-proxy_url: "http://proxy.cssf.lu:8080"
+proxy_url: "http://proxy.dmzi.cssf.lu:8080"
 proxy_env:
   http_proxy: "{{ proxy_url }}"
   https_proxy: "{{ proxy_url }}"
