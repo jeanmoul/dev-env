@@ -58,8 +58,8 @@
 - name: env var for proxy in /etc/environment
   lineinfile:
     dest: /etc/environment
-    line: "{{ item.key }}={{ item.value }}"
-  loop:  "{{ proxy_env | dict2items  }}"
+    line: "{{ item.0 }}={{ item.1 }}"
+  loop:  "{{ proxy_env | dictsort  }}"
 
 
 ##############################################
