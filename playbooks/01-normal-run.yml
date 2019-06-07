@@ -10,7 +10,7 @@
     - { role: role_ca-cert, tags: cert }
     - { role: role_users, ignore_errors: yes, tags: users }
     - { role: role_umake, tags: umake}
-    - { role: role_git_config, tags: git_config }
+      #    - { role: role_git_config, tags: git_config }
     # - { role: role_foreman_cb, tags: foreman_cb}
     #External Roles need proxy to be set
     - { role: chaosmail.nodejs, tags: nodejs  }
