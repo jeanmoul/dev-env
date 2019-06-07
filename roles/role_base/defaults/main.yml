@@ -1,7 +1,7 @@
 ---
 timezone: "Europe/Luxembourg"
 fallback_ntp_servers:
-  - timeserv.cssf.lu
+  - timeserv.dmzi.cssf.lu
 
 
 

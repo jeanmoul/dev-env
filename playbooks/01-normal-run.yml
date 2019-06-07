@@ -15,7 +15,7 @@
     #External Roles need proxy to be set
     - { role: chaosmail.nodejs, tags: nodejs  }
     - { role: willshersystems.sshd, tags: sshd }
-
+    - { role: geerlingguy.clamav, tags: av}
 
     - { role: role_ubuntu_upgrade, tags: upgrade,
            when: ansible_distribution == 'Ubuntu' and ansible_distribution_version != ubuntu_target_version and  ubuntu_target_version is defined  }

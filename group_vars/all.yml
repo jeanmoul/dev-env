@@ -120,7 +120,7 @@ group_ips: "{{ groups['all'] | map('extract', hostvars, ['ansible_default_ipv4',
 ##############################################
 timezone: "Europe/Luxembourg"
 ntp_servers:
-  - timeserv.cssf.lu
+  - timeserv.dmzi.cssf.lu
 
 
 ##############################################
@@ -155,10 +155,21 @@ sshd:
   PrintMotd: true
   PasswordAuthentication: true #for now
 
+################3
+# geerlingguy/ansible-role-clamav
+#############
+clamav_packages:
+  - clamav
+  - clamav-base
+  - clamav-daemon
+  - clamtk
+  - clamtk-gnome
 
 ################################
 # Ubuntu version
 ################################
 ubuntu_target_version: "19.04"
+
+
 
 

@@ -4,6 +4,7 @@
 # Import roles from ansible galaxy
 - src: chaosmail.nodejs
 - src: willshersystems.sshd
+- src: geerlingguy.clamav  
 
 
 
