@@ -61,7 +61,7 @@ apt_packages:
 
 
 nodejs_version: 12.x
-docker_version: 5:18.x
+docker_version: 5:19.x
 
 npm_packages:
   - http-server

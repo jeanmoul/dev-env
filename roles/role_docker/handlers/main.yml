@@ -9,4 +9,3 @@
     name: docker
     state: restarted
   listen: docker conf changed
-
